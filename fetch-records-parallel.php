@@ -27,7 +27,7 @@ foreach (array_chunk($identifiers, 10) as $chunk){
   
   foreach ($chunk as $i => $identifier) {
     $file = $dir . '/' . base64_encode($identifier) . '.xml';   
-    if (file_exists($file) && filesize($file)) continue;
+    if (file_exists($file)) continue;
 
     $files[$i] = $file;
 

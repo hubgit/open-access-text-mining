@@ -11,10 +11,13 @@ $xsltproc->importStyleSheet($xsl);
 
 $doc = new DOMDocument;
 
-foreach (glob('../../data/nlm-2.0/*.xml') as $file){
+foreach (glob('../../data/nlm-2.0/*.xml') as $file) {
+  $output = $dir . '/' . basename($file);
+  if (file_exists($output)) continue;
+  
   print "$file\n";
   $doc->load($file);
 
   $output = $xsltproc->transformToDoc($doc);
-  $output->save($dir . '/' . basename($file));
+  $output->save($output);
 }

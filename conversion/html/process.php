@@ -12,11 +12,14 @@ $xsltproc->importStyleSheet($xsl);
 $doc = new DOMDocument;
 $doc->preserveWhitespace = false;
 
-foreach (glob('../../data/nlm-3.0/*.xml') as $file){
+foreach (glob('../../data/nlm-3.0/*.xml') as $file) {
+  $output = $dir . '/' . basename($file, '.xml') . '.html';
+  if (file_exists($output)) continue;
+  
   print "$file\n";
   $doc->load($file);
 
-  $output = $xsltproc->transformToDoc($doc);
-  $output->formatOutput = true;
-  $output->save($dir . '/' . basename($file, '.xml') . '.html');
+  $html = $xsltproc->transformToDoc($doc);
+  $html->formatOutput = true;
+  $html->save($output);
 }
