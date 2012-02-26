@@ -28,12 +28,12 @@ foreach (array_chunk($identifiers, 10) as $chunk){
   foreach ($chunk as $i => $identifier) {
     $file = $dir . '/' . base64_encode($identifier) . '.xml';   
     if (file_exists($file) && filesize($file)) continue;
-    print "$file\n"; 
 
     $files[$i] = $file;
 
     $params['identifier'] = $identifier;
     $url = 'http://www.pubmedcentral.nih.gov/oai/oai.cgi?' . http_build_query($params);
+    print "$url\n"; 
 
     $connection = curl_init($url);
     curl_setopt($connection, CURLOPT_RETURNTRANSFER, true);
