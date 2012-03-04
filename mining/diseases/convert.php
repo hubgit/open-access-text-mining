@@ -1,6 +1,7 @@
 <?php
 
 date_default_timezone_set('Europe/London');
+$date = date('Y-m-d');
 
 $dir = __DIR__ . '/../../data/whatizit-ukpmcdisease';
 
@@ -27,7 +28,7 @@ foreach (glob($dir . '/*.xml') as $i => $file) {
     $annotationURI = '_:annotation-' . $uri;
     
     write_triple($output, array($annotationURI, 'a', '<http://purl.org/ao/Annotation>'));
-    write_triple($output, array($annotationURI, '<http://purl.org/pav/createdOn>', sprintf('"%s"', date('Y-m-d'))));
+    write_triple($output, array($annotationURI, '<http://purl.org/pav/createdOn>', sprintf('"%s"', $date)));
     write_triple($output, array($annotationURI, '<http://purl.org/pav/createdWith>', '<http://www.ebi.ac.uk/webservices/whatizit/>'));
     write_triple($output, array($annotationURI, '<http://purl.org/ao/annotatesResource>', "<$articleURI>"));
     

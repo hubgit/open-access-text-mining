@@ -13,9 +13,12 @@ foreach(glob(__DIR__ . '/../../data/html/*.html') as $file){
   if (file_exists($output)) continue;
 
   $dom->load($file);
-
-  $text = $dom->documentElement->textContent;
-  $params = array('text' => $text, 'pipelineName' => 'whatizitSwissprot', 'convertToHtml' => false);
+  
+  $params = array(
+    'pipelineName' => 'whatizitSwissprot', 
+    'convertToHtml' => false,
+    'text' => $dom->documentElement->textContent, 
+  );
 
   try {
     $data = $client->contact($params);
