@@ -49,9 +49,9 @@ foreach (glob('../../data/nlm-3.0/*.xml') as $file) {
   
   $nodes = $xpath->query("nlm:front/nlm:article-meta/nlm:article-id[@pub-id-type='doi']");
   if ($nodes->length){
-    $pmid = $nodes->item(0)->textContent;
+    $doi = $nodes->item(0)->textContent;
     print "DOI: $doi\n";
-    write_triple($output, array($articleURI, '<http://purl.org/dc/terms/identifier>', "<info:doi/$pmid>"));
+    write_triple($output, array($articleURI, '<http://purl.org/dc/terms/identifier>', "<info:doi/$doi>"));
   }
 }
 
