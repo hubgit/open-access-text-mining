@@ -44,14 +44,16 @@ foreach (glob('../../data/nlm-3.0/*.xml') as $file) {
   if ($nodes->length){
     $pmid = $nodes->item(0)->textContent;
     print "PMID: $pmid\n";
-    write_triple($output, array($articleURI, '<http://purl.org/dc/terms/identifier>', "<info:pmid/$pmid>"));
+    write_triple($output, array($articleURI, '<http://purl.org/dc/terms/identifier>', "<http://www.ncbi.nlm.nih.gov/pubmed/$pmid>"));
+    //write_triple($output, array($articleURI, '<http://purl.org/dc/terms/identifier>', "<info:pmid/$pmid>"));
   }
   
   $nodes = $xpath->query("nlm:front/nlm:article-meta/nlm:article-id[@pub-id-type='doi']");
   if ($nodes->length){
     $doi = $nodes->item(0)->textContent;
     print "DOI: $doi\n";
-    write_triple($output, array($articleURI, '<http://purl.org/dc/terms/identifier>', "<info:doi/$doi>"));
+    write_triple($output, array($articleURI, '<http://purl.org/dc/terms/identifier>', "<http://dx.doi.org/$doi>"));
+    //write_triple($output, array($articleURI, '<http://purl.org/dc/terms/identifier>', "<info:doi/$doi>"));
   }
 }
 

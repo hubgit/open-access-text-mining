@@ -59,8 +59,6 @@ foreach (glob($dir . '/*.xml') as $i => $file) {
   fclose($output);
 }
 
-fclose($output);
-
 $output = fopen($dir . '/topics.ttl', 'w');
 write_triple($output, array('<http://www.ebi.ac.uk/webservices/whatizit/>', '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>', '<http://purl.obolibrary.org/obo/IAO_0000010>'));
 
