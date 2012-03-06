@@ -5,8 +5,8 @@ $date = date('Y-m-d');
 
 $dir = __DIR__ . '/../../data/whatizit-ukpmcdisease';
 
-$output = fopen($dir . '/diseases.ttl', 'w');
-write_triple($output, array('<http://www.ebi.ac.uk/webservices/whatizit/>', 'a', '<http://purl.obolibrary.org/obo/IAO_0000010>'));
+$output = fopen($dir . '/all.ttl', 'w');
+write_triple($output, array('<http://www.ebi.ac.uk/webservices/whatizit/>', '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>', '<http://purl.obolibrary.org/obo/IAO_0000010>'));
 
 $dom = new DOMDocument;
 
@@ -27,7 +27,7 @@ foreach (glob($dir . '/*.xml') as $i => $file) {
     
     $annotationURI = '_:annotation-' . $uri;
     
-    write_triple($output, array($annotationURI, 'a', '<http://purl.org/ao/Annotation>'));
+    write_triple($output, array($annotationURI, '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>', '<http://purl.org/ao/Annotation>'));
     write_triple($output, array($annotationURI, '<http://purl.org/pav/createdOn>', sprintf('"%s"', $date)));
     write_triple($output, array($annotationURI, '<http://purl.org/pav/createdWith>', '<http://www.ebi.ac.uk/webservices/whatizit/>'));
     write_triple($output, array($annotationURI, '<http://purl.org/ao/annotatesResource>', "<$articleURI>"));
@@ -41,8 +41,8 @@ foreach (glob($dir . '/*.xml') as $i => $file) {
     }
     
     $contextURI = '_:context-' . $uri;
-    write_triple($output, array($annotationURI, '<http://purl.org/ao/context>', "<{$contextURI}>"));
-    write_triple($output, array($contextURI, 'a', '<http://purl.org/ao/TextSelector>'));
+    write_triple($output, array($annotationURI, '<http://purl.org/ao/context>', $contextURI));
+    write_triple($output, array($contextURI, '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>', '<http://purl.org/ao/TextSelector>'));
     write_triple($output, array($contextURI, '<http://purl.org/ao/exact>', sprintf('"%s"', $node->textContent)));
     write_triple($output, array($contextURI, '<http://purl.org/ao/onResource>', "<$articleURI>"));
   }
@@ -51,5 +51,5 @@ foreach (glob($dir . '/*.xml') as $i => $file) {
 fclose($output);
 
 function write_triple($file, $parts = array()) {
-  fwrite($file, implode(' ', (array) $parts) . ".\n");
+  fwrite($file, implode(' ', (array) $parts) . " .\n");
 }
