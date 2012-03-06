@@ -32,15 +32,13 @@ foreach (glob($dir . '/*.xml') as $i => $file) {
     $annotationURI = '_:annotation-' . $uri;
     
     write_triple($output, array($annotationURI, '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>', '<http://purl.org/ao/Qualifier>'));
+    write_triple($output, array($annotationURI, '<http://purl.org/ao/annotatesResource>', "<$articleURI>"));
     //write_triple($output, array($annotationURI, '<http://purl.org/pav/createdOn>', sprintf('"%s"', $date)));
     //write_triple($output, array($annotationURI, '<http://purl.org/pav/createdWith>', '<http://www.ebi.ac.uk/webservices/whatizit/>'));
-    write_triple($output, array($annotationURI, '<http://purl.org/ao/annotatesResource>', "<$articleURI>"));
     
     $ids = trim($node->getAttribute('ids'));
     if ($ids) {
       //foreach (explode(',', $ids) as $id) {
-        //if (!preg_match('/^\w+$/', $id)) continue;
-        //$proteins[$id] = true;
         //write_triple($output, array($annotationURI, '<http://purl.org/ao/hasTopic>', "<http://www.uniprot.org/uniprot/{$id}>"));
       //}
       $topicURI = $topics[$ids] ?: 'http://www.ebi.ac.uk/webservices/whatizit/whatizitSwissprot/' . md5($ids);
