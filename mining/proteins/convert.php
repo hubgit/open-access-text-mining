@@ -43,16 +43,15 @@ foreach (glob($dir . '/*.xml') as $i => $file) {
         //$proteins[$id] = true;
         //write_triple($output, array($annotationURI, '<http://purl.org/ao/hasTopic>', "<http://www.uniprot.org/uniprot/{$id}>"));
       //}
-      $topicURI = $topics[$ids] ?: '_:topic-' . md5($ids);
-      write_triple($output, array($annotationURI, '<http://purl.org/ao/hasTopic>', $topicURI));
-      $topics[$ids] = $topicURI;      
+      $topicURI = $topics[$ids] ?: 'http://www.ebi.ac.uk/webservices/whatizit/whatizitSwissprot/' . md5($ids);
+      write_triple($output, array($annotationURI, '<http://purl.org/ao/hasTopic>', "<$topicURI>"));
+      $topics[$ids] = $topicURI;
     }
     
     $contextURI = '_:context-' . $uri;
     write_triple($output, array($annotationURI, '<http://purl.org/ao/context>', $contextURI));
     write_triple($output, array($contextURI, '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>', '<http://purl.org/ao/TextSelector>'));
     write_triple($output, array($contextURI, '<http://purl.org/ao/exact>', sprintf('"%s"', $node->textContent)));
-    //write_triple($output, array($contextURI, '<http://purl.org/x-ao/lowercase>', sprintf('"%s"', strtolower($node->textContent))));
     write_triple($output, array($contextURI, '<http://purl.org/ao/onResource>', "<$articleURI>"));
   }
   
@@ -63,7 +62,7 @@ $output = fopen($dir . '/topics.ttl', 'w');
 write_triple($output, array('<http://www.ebi.ac.uk/webservices/whatizit/>', '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>', '<http://purl.obolibrary.org/obo/IAO_0000010>'));
 
 foreach ($topics as $topicURI) {
-  write_triple($output, array($topicURI, '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>', '<http://purl.uniprot.org/core/Protein>'));
+  write_triple($output, array("<$topicURI>", '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>', '<http://purl.uniprot.org/core/Protein>'));
 }
 
 fclose($output);
