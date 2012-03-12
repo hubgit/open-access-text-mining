@@ -9,6 +9,9 @@ $dom = new DOMDocument;
 
 $proteins = array();
 
+$topicsOutput = fopen($dir . '/topics.ttl', 'w');
+write_triple($topicsOutput, array('<http://www.ebi.ac.uk/webservices/whatizit/>', '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>', '<http://purl.obolibrary.org/obo/IAO_0000010>'));
+
 foreach (glob($dir . '/*.xml') as $i => $file) {
   print $file . "\n";
   
@@ -25,45 +28,47 @@ foreach (glob($dir . '/*.xml') as $i => $file) {
 
   $xpath = new DOMXPath($dom);
   $xpath->registerNamespace('ebi', 'http://www.ebi.ac.uk/z');
+  
+  $annotations = array();
 
   foreach ($xpath->query('//ebi:uniprot') as $j => $node) {
-    $uri = sprintf('%d-%d', $i, $j);
-    
-    $annotationURI = '_:annotation-' . $uri;
-    
-    write_triple($output, array($annotationURI, '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>', '<http://purl.org/ao/Qualifier>'));
-    write_triple($output, array($annotationURI, '<http://purl.org/ao/annotatesResource>', "<$articleURI>"));
-    //write_triple($output, array($annotationURI, '<http://purl.org/pav/createdOn>', sprintf('"%s"', $date)));
-    //write_triple($output, array($annotationURI, '<http://purl.org/pav/createdWith>', '<http://www.ebi.ac.uk/webservices/whatizit/>'));
-    
-    $ids = trim($node->getAttribute('ids'));
-    if ($ids) {
-      //foreach (explode(',', $ids) as $id) {
-        //write_triple($output, array($annotationURI, '<http://purl.org/ao/hasTopic>', "<http://www.uniprot.org/uniprot/{$id}>"));
-      //}
-      $topicURI = $topics[$ids] ?: 'http://www.ebi.ac.uk/webservices/whatizit/whatizitSwissprot/' . md5($ids);
-      write_triple($output, array($annotationURI, '<http://purl.org/ao/hasTopic>', "<$topicURI>"));
-      $topics[$ids] = $topicURI;
-    }
-    
-    $contextURI = '_:context-' . $uri;
-    write_triple($output, array($annotationURI, '<http://purl.org/ao/context>', $contextURI));
+	$ids = trim($node->getAttribute('ids'));
+	if (!$ids) continue;
+	
+	/* context */
+	$contextURI = "_:context-$i-$j";
     write_triple($output, array($contextURI, '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>', '<http://purl.org/ao/TextSelector>'));
     write_triple($output, array($contextURI, '<http://purl.org/ao/exact>', sprintf('"%s"', $node->textContent)));
     write_triple($output, array($contextURI, '<http://purl.org/ao/onResource>', "<$articleURI>"));
+	
+	/* topic */
+    $topicURI = $topics[$ids];
+    if (!$topicURI) {
+		$topicSuffix = md5($ids);
+		$topicURI = 'http://www.ebi.ac.uk/webservices/whatizit/whatizitSwissprot/' . $topicSuffix;
+		write_triple($topicsOutput, array("<$topicURI>", '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>', '<http://purl.uniprot.org/core/Protein>'));
+		$topics[$ids] = $topicURI;
+	}
+	
+    /* annotation */
+    $annotationURI = $annotations[$ids];
+    if (!$annotationURI) {   
+		$annotationSuffix = md5($ids);
+		$annotationURI = "_:annotation-$i-$j-$annotationSuffix";
+		write_triple($output, array($annotationURI, '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>', '<http://purl.org/ao/Qualifier>'));
+		write_triple($output, array($annotationURI, '<http://purl.org/ao/annotatesResource>', "<$articleURI>"));
+		//write_triple($output, array($annotationURI, '<http://purl.org/pav/createdOn>', sprintf('"%s"', $date)));
+		//write_triple($output, array($annotationURI, '<http://purl.org/pav/createdWith>', '<http://www.ebi.ac.uk/webservices/whatizit/>'));
+		write_triple($output, array($annotationURI, '<http://purl.org/ao/hasTopic>', "<$topicURI>"));
+		$annotations[$ids] = $annotationURI;
+	}
+	
+	write_triple($output, array($annotationURI, '<http://purl.org/ao/context>', $contextURI));	
   }
   
   fclose($output);
 }
 
-$output = fopen($dir . '/topics.ttl', 'w');
-write_triple($output, array('<http://www.ebi.ac.uk/webservices/whatizit/>', '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>', '<http://purl.obolibrary.org/obo/IAO_0000010>'));
-
-foreach ($topics as $topicURI) {
-  write_triple($output, array("<$topicURI>", '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>', '<http://purl.uniprot.org/core/Protein>'));
-}
-
-fclose($output);
 
 function write_triple($file, $parts = array()) {
   fwrite($file, implode(' ', (array) $parts) . " .\n");
