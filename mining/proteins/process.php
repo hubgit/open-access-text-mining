@@ -24,6 +24,7 @@ foreach(glob(__DIR__ . '/../../data/html/*.html') as $file){
     $data = $client->contact($params);
   } 
   catch (SoapFault $e) { 
+	print $e->getMessage() . "\n";
     continue; 
   }
 

@@ -20,8 +20,9 @@ $identifiers = file('identifiers.csv', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_L
 print count($identifiers) . " identifiers\n";
 
 $finished = 0;
+$slice = 10;
 
-foreach (array_chunk($identifiers, 10) as $chunk){
+foreach (array_chunk($identifiers, $slice) as $chunk){
   $connections = array();
   $files = array();
   
@@ -42,7 +43,12 @@ foreach (array_chunk($identifiers, 10) as $chunk){
     
     $connections[$i] = $connection;
   }
-
+  
+  if (!$connections) {
+	$finished += $slice;
+	continue;
+  }
+  
   do {
     curl_multi_exec($curl, $active);
     usleep(100000);

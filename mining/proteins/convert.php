@@ -53,8 +53,7 @@ foreach (glob($dir . '/*.xml') as $i => $file) {
     /* annotation */
     $annotationURI = $annotations[$ids];
     if (!$annotationURI) {   
-		$annotationSuffix = md5($ids);
-		$annotationURI = "_:annotation-$i-$j-$annotationSuffix";
+		$annotationURI = "_:annotation-$i-$j";
 		write_triple($output, array($annotationURI, '<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>', '<http://purl.org/ao/Qualifier>'));
 		write_triple($output, array($annotationURI, '<http://purl.org/ao/annotatesResource>', "<$articleURI>"));
 		//write_triple($output, array($annotationURI, '<http://purl.org/pav/createdOn>', sprintf('"%s"', $date)));
