@@ -18,6 +18,6 @@ foreach (glob('../../data/nlm-2.0/*.xml') as $file) {
   print "$file\n";
   $doc->load($file);
 
-  $output = $xsltproc->transformToDoc($doc);
-  $output->save($output);
+  $xml = $xsltproc->transformToDoc($doc);
+  $xml->save($output);
 }
