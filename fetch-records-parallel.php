@@ -37,6 +37,7 @@ foreach (array_chunk($identifiers, 10) as $chunk){
 
     $connection = curl_init($url);
     curl_setopt($connection, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($connection, CURLOPT_ENCODING, 'gzip,deflate');
     curl_multi_add_handle($curl, $connection);
     
     $connections[$i] = $connection;
