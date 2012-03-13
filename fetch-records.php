@@ -13,6 +13,13 @@ $params = array(
 $dom = new DOMDocument;
 $dom->preserveWhiteSpace = false;
 
+$connection = curl_init();
+
+curl_setopt_array($connection, array(
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_ENCODING => 'gzip,deflate',
+));
+
 $input = fopen('identifiers.csv', 'r'); // https://gist.github.com/1875622
 
 while (($row = fgetcsv($input)) !== false) {
@@ -26,8 +33,12 @@ while (($row = fgetcsv($input)) !== false) {
 
   $url = 'http://www.pubmedcentral.nih.gov/oai/oai.cgi?' . http_build_query($params);
   print "$url\n";
+  
+  curl_setopt($connection, CURLOPT_URL, $url);
+  $data = curl_exec($connection);
+  if (!$data) continue;
 
-  $dom->load($url, LIBXML_NOENT | LIBXML_NOCDATA);
+  $dom->loadXML($data, LIBXML_NOENT | LIBXML_NOCDATA);
 
   $xpath = new DOMXPath($dom);
   $xpath->registerNamespace('oai', 'http://www.openarchives.org/OAI/2.0/');

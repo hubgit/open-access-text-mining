@@ -7,10 +7,10 @@ $dom = new DOMDocument;
 $client = new SoapClient('http://www.ebi.ac.uk/webservices/whatizit/ws?wsdl');
 
 foreach(glob(__DIR__ . '/../../data/html/*.html') as $file){
-  print $file . "\n";
-
   $output = $dir . '/' . basename($file, '.html') . '.xml';
   if (file_exists($output)) continue;
+
+  print $file . "\n";
 
   $dom->load($file);
   
@@ -24,7 +24,7 @@ foreach(glob(__DIR__ . '/../../data/html/*.html') as $file){
     $data = $client->contact($params);
   } 
   catch (SoapFault $e) { 
-	print $e->getMessage() . "\n";
+	  print $e->getMessage() . "\n";
     continue; 
   }
 
